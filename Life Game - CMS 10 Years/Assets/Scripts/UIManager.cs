@@ -9,8 +9,11 @@ public class UIManager : MonoBehaviour
     public Text ResultMessage;
     public Text BlackScore;
     public Text WhiteScore;
+    public Text Round;
     public Text BlackID;
     public Text WhiteID;
+    public GameObject WhiteTurn;
+    public GameObject BlackTurn;
     public Transform ChessParent;
     public Chess ChessPrefab;
     private Chess[,] _chesses = new  Chess[8,8];
@@ -22,6 +25,8 @@ public class UIManager : MonoBehaviour
     {
         CreateChesses();
         RefreshChesses();
+        SetTurnmsgActive();
+        ShowRound();
     }
 
     // Update is called once per frame
@@ -35,21 +40,41 @@ public class UIManager : MonoBehaviour
         {
             _chessBoardVer = GameManager.Instance.ChessBoardVer;
             RefreshChesses();
+            
         }
-        if(GameManager.Instance.GameOver){
+
+        SetTurnmsgActive();
+        ShowRound();
+
+        if (GameManager.Instance.GameOver){
             if(GameManager.Instance.BlackWin)
             ShowMessage("游戏结束，黑方胜！");
             if(GameManager.Instance.WhiteWin)
             ShowMessage("游戏结束，白方胜！");
             if(GameManager.Instance.BothWin)
             ShowMessage("游戏结束，平局！");
+            BlackTurn.SetActive(false);
+            WhiteTurn.SetActive(false);
         }
+      
 
     }
     public void SetMessageBoxActive(bool active)
     {
         GameResult.SetActive(active);
-
+    }
+    public void SetTurnmsgActive()
+    {
+        if (GameManager.Instance._isBlackTurn == true)
+        {
+            BlackTurn.SetActive(true);
+            WhiteTurn.SetActive(false);
+        }
+        else
+        {
+            WhiteTurn.SetActive(true);
+            BlackTurn.SetActive(false);
+        }       
     }
 
     public void SetScore(bool setBlack, int score)
@@ -68,6 +93,11 @@ public class UIManager : MonoBehaviour
     {
         ResultMessage.text = message;
         SetMessageBoxActive(true);
+    }
+
+    public void ShowRound()
+    {
+        Round.text = "当前回合："+_chessBoardVer.ToString();
     }
 
     public void CreateChesses() {
@@ -95,7 +125,7 @@ public class UIManager : MonoBehaviour
     public void RestartGame(){
         GameManager.Instance.InitGame();
         SetMessageBoxActive (false);
-    }
+        }
   
     }
 
